@@ -1,0 +1,31 @@
+plugins {
+    id 'java'
+}
+
+group 'wtf.bhopper'
+version '1.0'
+
+sourceCompatibility = 1.8
+
+configurations {
+    library
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    configurations.implementation.extendsFrom(configurations.library)
+    library 'com.google.code.gson:gson:2.2.4'
+    library 'org.apache.httpcomponents:httpclient:4.3.3'
+}
+
+jar {
+    from {
+        configurations.library.collect {it.isDirectory() ? it : zipTree(it) }
+    }
+    manifest {
+        attributes("Main-Class": "wtf.bhopper.nonsense.launcher.Launcher")
+    }
+}
