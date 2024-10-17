@@ -22,6 +22,8 @@ dependencies {
 }
 
 jar {
+    baseName 'Nonsense'
+    version ''
     from {
         configurations.library.collect {it.isDirectory() ? it : zipTree(it) }
     }

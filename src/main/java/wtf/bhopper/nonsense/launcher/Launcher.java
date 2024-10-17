@@ -16,12 +16,12 @@ public class Launcher {
     public final Path dataPath;
 
     public Launcher() throws Exception {
-        this.dataPath = EnumOS.getDataPath();
+        this.dataPath = Locations.getDataPath();
         this.dataPath.toFile().mkdirs();
         this.copyAssets();
         this.downloadFile("client.jar");
         this.downloadFile("libs.jar");
-        this.downloadNatives(EnumOS.getNativesZip());
+        this.downloadNatives("natives.zip");
         this.launch();
     }
 
@@ -117,7 +117,7 @@ public class Launcher {
         System.out.println("Copying assets...");
 
         Path assetsDir = this.dataPath.resolve("assets");
-        Path mcAssetsDir = EnumOS.getMinecraftPath().resolve("assets");
+        Path mcAssetsDir = Locations.getMinecraftPath().resolve("assets");
         File indexes = assetsDir.resolve("indexes").toFile();
         File logConfigs = assetsDir.resolve("log_configs").toFile();
         File objects = assetsDir.resolve("objects").toFile();
@@ -146,16 +146,14 @@ public class Launcher {
             System.out.println("make sure you are using Java 1.8 or the client may not launch properly!");
             System.out.println("You can download Java 1.8 at: https://www.java.com/en/download/manual.jsp");
             System.out.println();
-            if (EnumOS.getOs() == EnumOS.WINDOWS) {
             System.out.println("If you are still having problems after installing Java 1.8 try running");
             System.out.println("launchfixed.bat");
             System.out.println();
-            }
             System.out.println("For support message @calculushvh on Discord.");
             System.out.println("-------------------------------------------------------------------------");
             System.out.println();
         }
-        String javaPath = Paths.get(System.getProperty("java.home"), EnumOS.getOs() == EnumOS.WINDOWS ? "bin/java.exe" : "bin/java").toFile().getAbsolutePath();
+        String javaPath = Paths.get(System.getProperty("java.home"), "bin/java.exe").toFile().getAbsolutePath();
         String[] command = new String[]{
                 "\"" + javaPath + "\"",
                 "-Xms1024M",
@@ -165,7 +163,8 @@ public class Launcher {
                 "net.minecraft.client.main.Main",
                 "--version", "Nonsense",
                 "--accessToken", "0",
-                "--gameDir", "\"" + EnumOS.getMinecraftPath().toFile().getAbsolutePath() + "\"",
+                "--username", "Nonsense",
+                "--gameDir", "\"" + Locations.getMinecraftPath().toFile().getAbsolutePath() + "\"",
                 "--assetsDir", "assets",
                 "--assetIndex", "1.8",
                 "--userProperties", "{}"
@@ -176,6 +175,17 @@ public class Launcher {
     }
 
     public static void main(String[] args) {
+
+        if (!Locations.checkOs()) {
+            System.out.println();
+            System.out.println("-----------------------------------------");
+            System.out.println("Your operating system is not supported.  ");
+            System.out.println("Nonsense client only supports Windows 10+");
+            System.out.println("-----------------------------------------");
+            System.out.println();
+            return;
+        }
+
         try {
             new Launcher();
         } catch (Exception exception) {
