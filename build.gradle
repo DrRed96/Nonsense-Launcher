@@ -1,0 +1,32 @@
+plugins {
+    id 'java'
+}
+
+group 'wtf.bhopper'
+version 'Beta-241206'
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    library
+}
+
+dependencies {
+
+    configurations.implementation.extendsFrom(configurations.library)
+
+    // Needed for extracting the tar.gz files
+    library 'org.apache.commons:commons-compress:1.26.0'
+}
+
+jar {
+    archiveFileName.set('Nonsense.jar')
+    manifest {
+        attributes("Main-Class": "wtf.bhopper.nonsenselauncher.Main")
+    }
+    from {
+        configurations.library.collect {it.isDirectory() ? it : zipTree(it) }
+    }
+}
